@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>ADX 对数看板</title>
+<meta name="robots" content="noindex,nofollow"><meta name="googlebot" content="noindex,nofollow">
+<style>
+:root{
+  --bg:#f4f6fa; --card:#ffffff; --line:#e6e9f0; --ink:#111827; --ink2:#4b5563; --ink3:#9aa3b2;
+  --blue:#2563eb; --red:#e1324b; --redbg:#fff1f2; --green:#0e9f6e; --greenbg:#ecfdf5;
+  --amber:#b45309; --amberbg:#fff7ed;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:
+    radial-gradient(1200px 500px at 15% -10%, #e7efff 0%, rgba(231,239,255,0) 60%),
+    radial-gradient(900px 400px at 90% -5%, #eafaf3 0%, rgba(234,250,243,0) 55%),
+    var(--bg);
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+  color:var(--ink); -webkit-font-smoothing:antialiased;
+  padding:34px 26px 60px;
+}
+.wrap{max-width:1180px;margin:0 auto}
+
+.head{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:22px}
+.head h1{font-size:28px;margin:0 0 8px;letter-spacing:.5px;font-weight:700}
+.head .sub{color:var(--ink3);font-size:13px;line-height:1.7}
+.badges{display:flex;gap:8px;flex-wrap:wrap}
+.badge{background:#fff;border:1px solid var(--line);border-radius:999px;padding:7px 14px;font-size:12.5px;color:var(--ink2);box-shadow:0 1px 2px rgba(17,24,39,.04)}
+.badge b{color:var(--ink);font-weight:600}
+.badge.warn{background:var(--amberbg);border-color:#fed7aa;color:var(--amber)}
+
+.section{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:0 6px 24px rgba(17,24,39,.05);margin-bottom:26px;overflow:hidden}
+.sec-head{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:20px 24px 16px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.sec-head h2{margin:0;font-size:19px;font-weight:700;letter-spacing:.3px}
+.sec-head h2 span{color:var(--blue)}
+.sec-note{font-size:12.5px;color:var(--ink3)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;padding:14px 24px 0}
+.chip{font-size:12.5px;padding:5px 11px;border-radius:999px;border:1px solid var(--line);color:var(--ink2);background:#fafbfd}
+.chip.red{background:var(--redbg);border-color:#fecdd3;color:#b91c3c}
+.chip.green{background:var(--greenbg);border-color:#bbf7d0;color:#047857}
+.chip.amber{background:var(--amberbg);border-color:#fed7aa;color:#b45309}
+
+table{width:100%;border-collapse:separate;border-spacing:0;font-size:13.5px}
+thead th{
+  position:sticky;top:0;background:#fbfcfe;color:var(--ink3);font-weight:600;font-size:12px;
+  letter-spacing:.4px;padding:12px 10px;border-bottom:1px solid var(--line);text-align:center;white-space:nowrap
+}
+thead th:first-child{text-align:left;padding-left:24px}
+.thd{display:block;font-size:10.5px;font-weight:500;color:#b3bac6;margin-top:2px}
+tbody td{padding:13px 10px;border-bottom:1px solid #f1f3f8;text-align:center;color:var(--ink2)}
+tbody td:first-child{text-align:left;padding-left:24px;color:var(--ink);font-weight:600}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:#fafcff}
+td.gap{font-variant-numeric:tabular-nums}
+td.gap.hot{color:var(--red);font-weight:700;background:var(--redbg)}
+td.gap.cold{color:var(--ink3)}
+td.amt{color:var(--ink3);font-size:12.5px}
+.st{display:inline-flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.tag{font-size:11.5px;padding:3px 9px;border-radius:999px;border:1px solid transparent;white-space:nowrap}
+.tag.red{background:var(--redbg);color:#b91c3c;border-color:#fecdd3}
+.tag.green{background:var(--greenbg);color:#047857;border-color:#bbf7d0}
+.tag.amber{background:var(--amberbg);color:#b45309;border-color:#fed7aa}
+.tag.grey{background:#f4f6fa;color:var(--ink3);border-color:var(--line)}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(268px,1fr));gap:14px;padding:20px 24px 24px}
+.card{border:1px solid var(--line);border-radius:14px;padding:16px 16px 14px;background:#fff;transition:.18s;position:relative}
+.card:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(17,24,39,.07)}
+.card.hot{border-color:#fecdd3;background:linear-gradient(180deg,#fff8f8 0%,#fff 55%)}
+.card.ok{border-color:#e6e9f0}
+.card .name{font-size:15px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.card .dot{width:7px;height:7px;border-radius:50%;flex:none}
+.dot.red{background:var(--red)}
+.dot.grey{background:#d1d5db}
+.card .row{display:flex;justify-content:space-between;font-size:12.5px;color:var(--ink3);margin-top:6px}
+.card .row b{color:var(--ink2);font-weight:600}
+.card .big{display:flex;align-items:baseline;gap:6px;margin:2px 0 12px}
+.card .big .num{font-size:26px;font-weight:800;letter-spacing:-.5px;font-variant-numeric:tabular-nums}
+.card .big .unit{font-size:12px;color:var(--ink3)}
+.delta{font-size:12.5px;font-weight:700;font-variant-numeric:tabular-nums}
+.delta.down{color:var(--red)}
+.delta.up{color:#0b7285}
+.meter{height:5px;border-radius:4px;background:#f0f2f7;overflow:hidden;margin-top:10px}
+.meter i{display:block;height:100%;border-radius:4px}
+.open{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:13px;padding:8px 10px;border:1px solid var(--line);border-radius:9px;font-size:12.5px;color:var(--blue);text-decoration:none;background:#fafcff;transition:.15s}
+.open:hover{background:#eff5ff;border-color:#c7ddff;transform:translateY(-1px)}
+.open span{font-size:11px;color:#8fb2f0}
+.open.inline{margin:0;padding:7px 13px;background:#fff;width:auto;white-space:nowrap}
+
+.concl{border-top:1px dashed #e6e9f0;background:#fafbfd;padding:18px 24px 22px}
+.concl .t{font-size:12px;letter-spacing:.4px;color:var(--ink3);font-weight:600;margin-bottom:9px}
+.concl p{margin:0 0 3px;padding-left:17px;position:relative;font-size:13px;line-height:1.95;color:var(--ink2)}
+.concl p::before{content:'';position:absolute;left:4px;top:10px;width:4px;height:4px;border-radius:50%;background:#c7ccd8}
+.concl p b{color:var(--ink);font-weight:600}
+.concl p.gh{color:var(--ink3);margin-top:13px;padding-left:2px}
+.concl p.gh::before{display:none}
+.foot{color:var(--ink3);font-size:12px;line-height:1.8;padding:0 4px}
+.foot b{color:var(--ink2);font-weight:600}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="head">
+    <div>
+      <h1>ADX 对数看板</h1>
+      <div class="sub">数据截至 <b id="cutoff"></b>　｜　对账窗口 <span id="win"></span>　｜　每日 16:35 巡检、16:40 对数自动刷新</div>
+    </div>
+    <div class="badges" id="badges"></div>
+  </div>
+
+  <div class="section">
+    <div class="sec-head">
+      <h2>一、有渠道 API 的 ADX 家族（<span id="cntA">0</span> 个）</h2>
+      <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+        <div class="sec-note">金额 gap =（我方 − API）÷ API；正数表示 ADX 比我们少，负数表示比我们多</div>
+        <a class="open inline" href="https://alidocs.dingtalk.com/i/nodes/2Amq4vjg89gPBrOATYdLD5zBV3kdP0wQ?utm_scene=person_space" target="_blank" rel="noopener">查看源表 <span>↗</span></a>
+      </div>
+    </div>
+    <div class="chips" id="chipsA"></div>
+    <div style="padding:6px 10px 0;overflow:auto">
+      <table id="tbA">
+        <thead id="thA"></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div class="concl" id="conclA"></div>
+  </div>
+
+  <div class="section">
+    <div class="sec-head">
+      <h2>二、无渠道 API 的 ADX 家族（<span id="cntB">0</span> 个）</h2>
+      <div class="sec-note">对方数据落后 ≥3 天即判定停滞；幅度取对方停更后首日到我方最后有数日</div>
+    </div>
+    <div class="chips" id="chipsB"></div>
+    <div class="grid" id="gridB"></div>
+    <div class="concl" id="conclB"></div>
+  </div>
+
+  <div class="foot" id="foot"></div>
+</div>
+
+<!-- 两个定时任务每天写这两个文件；页面只读 -->
+<script>
+// 有渠道 API 的 ADX 家族 —— 由每日 16:35「ADX 金额差异巡检」自动写入，只读展示
+window.DASH_API = {
+  cutoff: "2026-11-25",
+  window: "11-21 ~ 11-25（对账数据仅保留 5 天）",
+  ready: "11-26 的对账数据尚未写入，本页为 11-25 结论",
+  days: ["11-21","11-22","11-23","11-24","11-25"],
+  families: [
+    {name:"topon",       th:3, gaps:[-1.02,-1.16,-1.44,-1.14,-0.91], api:2223.21, ours:2202.93, note:""},
+    {name:"lacuna",      th:3, gaps:[0.07,0.21,0.33,-2.92,-1.37],    api:654.31,  ours:645.33,  note:""},
+    {name:"mintos",      th:3, gaps:[-0.85,-0.56,-0.31,-0.52,-0.54], api:548.65,  ours:545.71,  note:""},
+    {name:"lechance",    th:3, gaps:[-0.35,-2.04,-1.36,0.75,-0.99],  api:479.65,  ours:474.89,  note:""},
+    {name:"leapmob",     th:3, gaps:[-0.45,0.98,0.23,-0.41,-0.95],   api:98.52,   ours:97.58,   note:""},
+    {name:"rtbsape",     th:3, gaps:[0.18,0.24,-0.14,-0.68,-1.66],   api:4.76,    ours:4.68,    note:"11-25 未结算完整"},
+    {name:"roockmobile", th:3, gaps:[-0.27,-0.12,-0.17,-0.38,-0.51], api:201.57,  ours:200.54,  note:""},
+    {name:"smaato",      th:3, gaps:[-1.05,-0.84,-0.73,-0.83,-1.47], api:516.28,  ours:508.68,  note:""},
+    {name:"algorix",     th:3, gaps:[-0.46,-0.46,-0.24,-0.20,-0.10], api:1098.29, ours:1097.22, note:""},
+    {name:"advlion",     th:3, gaps:[-0.92,-0.68,0.40,-0.37,-0.76],  api:146.76,  ours:145.65,  note:""},
+    {name:"verve",       th:3, gaps:[-0.25,-0.45,-0.18,0.04,0.12],   api:309.85,  ours:310.23,  note:""},
+    {name:"intenze",     th:5, gaps:[3.32,5.17,2.64,7.56,5.14],      api:22.97,   ours:24.15,   note:""},
+    {name:"edge226",     th:3, gaps:[2.25,2.64,9.87,21.82,27.99],    api:839.05,  ours:1073.92, note:""},
+    {name:"intsig",      th:3, gaps:[-0.55,-0.41,-0.27,-0.48,-0.34], api:204.72,  ours:204.02,  note:""},
+    {name:"bidmatrix",   th:3, gaps:[-0.08,-0.21,-0.13,-0.11,-0.33], api:221.15,  ours:220.42,  note:""},
+    {name:"orangestorm", th:3, gaps:[-2.06,-1.49,-3.98,-1.27,-0.56], api:28.66,   ours:28.50,   note:"11-25 未结算完整"}
+  ],
+  concl: [
+    {name:"edge226", text:" 近三天的数据再次比我们少，gap 均大于 3%，分别为 9.87%、21.82%、27.99%，差距持续扩大。"},
+    {name:"intenze", text:" 近两天的数据再次比我们少，gap 均大于 5%，分别为 7.56%、5.14%，11-23 一度回落到 2.64%。"},
+    {name:"orangestorm", text:" 此前 11-23 的数据比我们多 3.98%，近两天回落到 1.27%、0.56%，已恢复正常。"}
+  ]
+};
+
+</script>
+<script>
+// 无渠道 API 的 ADX 家族 —— 由每日 16:40「ADX 对数结果更新」自动写入，只读展示
+window.DASH_NOAPI = {
+  cutoff: "2026-11-25",
+  families: [
+    {name:"mobupps",    lastPartner:"11-17", lastOurs:"11-25", blank:8, firstDate:"11-18", first:1431,    last:495,     pct:-65.41,  note:"11/18 起大幅下探，11/21–11/24 稳定在 515–581"},
+    {name:"geniee",     lastPartner:"11-18", lastOurs:"11-25", blank:7, firstDate:"11-19", first:180.46,  last:127.88,  pct:-29.14,  note:"降到 109 后小幅回升至 125–128"},
+    {name:"speeddata",  lastPartner:"列全空", lastOurs:"11-25", blank:7, firstDate:"11-19", first:1.16,   last:13.39,   pct:1054.31, note:"涨幅几乎全来自 11/25 单日，区间合计仅 30.76 美元"},
+    {name:"apkpure",    lastPartner:"11-22", lastOurs:"11-25", blank:3, firstDate:"11-23", first:244.01,  last:187.15,  pct:-23.30,  note:""},
+    {name:"mobikok",    lastPartner:"11-22", lastOurs:"11-25", blank:3, firstDate:"11-23", first:330.07,  last:160.79,  pct:-51.29,  note:"11/22 还有 853，之后连降三天"},
+    {name:"display_adx",lastPartner:"11-22", lastOurs:"11-25", blank:3, firstDate:"11-23", first:703.28,  last:177.99,  pct:-74.69,  note:"降幅集中在 11/25：604.81 → 177.99"},
+    {name:"flatads",    lastPartner:"11-24", lastOurs:"11-25", blank:1, firstDate:"11-24", first:4721.17, last:4093.24, pct:-13.30,  note:"只差 1 天，未达 3 天；Impression 列长期空白"}
+  ],
+  concl: [
+    {name:"mobupps", text:" 近 8 天未更新数据，消耗下降约 65.41%。"},
+    {name:"geniee", text:" 近 7 天未更新数据，消耗下降约 29.14%。"},
+    {name:"speeddata", text:" 近 7 天未更新数据，消耗上涨约 1054.31%；对方列全空，无法做 gap 对比，量级过小、参考意义有限。"},
+    {name:"apkpure", text:" 近 3 天未更新数据，消耗下降约 23.30%。"},
+    {name:"mobikok", text:" 近 3 天未更新数据，消耗下降约 51.29%；停更前 cost gap 连续走阔，11-20 我方比对方少 6.07%、11-21 少 28.72%、11-22 少 44.15%，已超过 3%。"},
+    {name:"display_adx", text:" 近 3 天未更新数据，消耗下降约 74.69%。"},
+    {kind:"note", text:"未达标 1 家"},
+    {name:"flatads", text:" 只差 1 天未达 3 天；Impression 列长期空白。"}
+  ]
+};
+
+</script>
+<script>
+const URLS = {
+  mobupps:"https://www.kdocs.cn/l/ceEBZ7RNCbCL",
+  apkpure:"https://www.kdocs.cn/l/ccqhCwE25maE",
+  geniee:"https://docs.google.com/spreadsheets/d/1LrPJxUtXgrDH2x-0ue3kuYJEClF0RTKG6Wdw1_JQOkI/edit?gid=0#gid=0",
+  speeddata:"https://docs.google.com/spreadsheets/d/1TYn1DmdcOPlQ32s3vhD5Cg3-rWWFcMR6ZSgN9zIUR1k/edit?usp=sharing",
+  mobikok:"https://docs.google.com/spreadsheets/d/1NwfwxcUbraNHgdkRPoBDz08Jruifdv66z0WFyYkqzto/edit?usp=sharing",
+  display_adx:"https://docs.google.com/spreadsheets/d/1BcByg6QWlBA8MN42BnxpRtDwXWQyDOkqSGPLDnVu2_k/edit?gid=0#gid=0",
+  flatads:"https://docs.google.com/spreadsheets/d/1dyDccb5ClrxOT3G3DJyo-KXRPdIXQGnGMjFv9Cr6Sls/edit?gid=0#gid=0"
+};
+
+const API = window.DASH_API || {cutoff:"—", days:[], families:[], concl:[]};
+const NA  = window.DASH_NOAPI || {cutoff:"—", families:[], concl:[]};
+const DASH = {cutoff:API.cutoff, window:API.window||"", ready:API.ready||"数据文件等待定时任务写入"};
+
+function fmt(n){ return Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+
+// ---------- 有 API 家族 ----------
+const tbody = document.querySelector('#tbA tbody');
+document.getElementById('thA').innerHTML = `<tr>
+  <th>ADX</th>${API.days.map(d=>`<th>${d}</th>`).join('')}
+  <th>API 金额<span class="thd">${API.cutoff}</span></th>
+  <th>我方金额<span class="thd">${API.cutoff}</span></th>
+  <th>状态</th></tr>`;
+
+let sync=0, cont=0, rec=0;
+(API.families||[]).forEach(f=>{
+  const over = f.gaps.map(g=>Math.abs(g) >= f.th);
+  const lastOver = over[over.length-1];
+  let run=0; for(let i=over.length-1;i>=0;i--){ if(over[i]) run++; else break; }
+  const hadOver = over.some((v,i)=>v && i<over.length-1);
+  const tags=[];
+  if(lastOver){ tags.push({c:'red', t:'需同步'}); sync++; }
+  if(run>=2){ tags.push({c:'red', t:'连续 '+run+' 天'}); cont++; }
+  if(hadOver && !lastOver){ tags.push({c:'green', t:'已恢复正常'}); rec++; }
+  if(!tags.length) tags.push({c: f.note? 'amber':'grey', t: f.note? '未结算':'正常'});
+
+  const tr=document.createElement('tr');
+  let html = `<td>${f.name}${f.note? ' <span class="tag amber" style="margin-left:6px">未结算</span>':''}</td>`;
+  f.gaps.forEach(g=>{
+    const hot = Math.abs(g) >= f.th;
+    html += `<td class="gap ${hot?'hot':'cold'}">${(g>0?'+':'')}${g.toFixed(2)}%</td>`;
+  });
+  html += `<td class="amt">${fmt(f.api)}</td><td class="amt">${fmt(f.ours)}</td>`;
+  html += `<td><span class="st">${tags.map(t=>`<span class="tag ${t.c}">${t.t}</span>`).join('')}</span></td>`;
+  tr.innerHTML = html;
+  tbody.appendChild(tr);
+});
+document.getElementById('cntA').textContent = (API.families||[]).length;
+document.getElementById('chipsA').innerHTML = API.families.length ? [
+  `<span class="chip red">需同步 ${sync} 家</span>`,
+  `<span class="chip red">连续超标 ${cont} 家</span>`,
+  `<span class="chip green">恢复正常 ${rec} 家</span>`,
+  `<span class="chip">其余 ${API.families.length - sync} 家昨日在阈值内</span>`
+].join('') : `<span class="chip">暂无数据</span>`;
+
+// ---------- 无 API 家族 ----------
+const grid = document.getElementById('gridB');
+let stale=0;
+(NA.families||[]).forEach(f=>{
+  const hit = f.blank >= 3;
+  if(hit) stale++;
+  const down = f.pct < 0;
+  const pctTxt = (down?'':'+') + Number(f.pct).toFixed(2) + '%';
+  const meterW = Math.min(100, Math.round(f.blank/8*100));
+  const card = document.createElement('div');
+  card.className = 'card ' + (hit?'hot':'ok');
+  card.innerHTML = `
+    <div class="name">${f.name}<span class="dot ${hit?'red':'grey'}"></span></div>
+    <div class="big"><span class="num">${f.blank}</span><span class="unit">天空白${hit?'　达标':'　未达标'}</span></div>
+    <div class="row"><span>对方最后有数</span><b>${f.lastPartner}</b></div>
+    <div class="row"><span>我方最后有数</span><b>${f.lastOurs}</b></div>
+    <div class="row"><span>我方消耗 ${f.firstDate} → ${f.lastOurs}</span><b>${fmt(f.first)} → ${fmt(f.last)}</b></div>
+    <div class="row"><span>变化幅度</span><span class="delta ${down?'down':'up'}">${pctTxt}</span></div>
+    <div class="meter"><i style="width:${meterW}%;background:${hit?'linear-gradient(90deg,#fb7185,#e1324b)':'#d7dbe5'}"></i></div>
+    ${f.note? `<div class="row" style="color:var(--ink3);margin-top:9px;display:block;line-height:1.6">${f.note}</div>`:''}
+    ${URLS[f.name]? `<a class="open" href="${URLS[f.name]}" target="_blank" rel="noopener">查看源表 <span>↗</span></a>`:''}
+  `;
+  grid.appendChild(card);
+});
+document.getElementById('cntB').textContent = (NA.families||[]).length;
+document.getElementById('chipsB').innerHTML = NA.families.length ? [
+  `<span class="chip red">停滞达标 ${stale} 家</span>`,
+  `<span class="chip">未达标 ${NA.families.length - stale} 家</span>`
+].join('') : `<span class="chip">暂无数据</span>`;
+
+// ---------- 文字结论 ----------
+function renderConcl(el, items, cutoff){
+  const html = [`<div class="t">结论 · 对话同步的文字版｜截至 ${cutoff}</div>`];
+  (items||[]).forEach(it=>{
+    if(it.kind === 'note') html.push(`<p class="gh">${it.text}</p>`);
+    else html.push(`<p><b>${it.name}</b>${it.text}</p>`);
+  });
+  el.innerHTML = html.join('');
+}
+renderConcl(document.getElementById('conclA'), API.concl, API.cutoff);
+renderConcl(document.getElementById('conclB'), NA.concl, NA.cutoff);
+
+document.getElementById('cutoff').textContent = DASH.cutoff;
+document.getElementById('win').textContent = DASH.window;
+document.getElementById('badges').innerHTML = `
+  <span class="badge">数据面 <b>${API.families.length + NA.families.length}</b> 个 ADX</span>
+  <span class="badge warn">${DASH.ready}</span>`;
+document.getElementById('foot').innerHTML = `
+  <b>读法：</b>红色 = 金额 gap 达阈值（一般 3%，intenze 5%）；绿色 = 此前超标、最新一天已回到阈值内；灰色 = 正常。<br>
+  <b>口径：</b>gap =（我方金额 − API金额）÷ API金额；正数为 ADX 比我们少，负数为比我们多。无 API 家族用“对方停更后首日 → 我方最后有数日”的首尾对比；若对方停更前同日 cost gap 已超 3%，在下方结论里单独提示。
+`;
+</script>
+</body>
+</html>
+
