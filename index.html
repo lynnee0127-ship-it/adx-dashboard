@@ -178,25 +178,25 @@ window.DASH_API = {
 <script>
 // 无渠道 API 的 ADX 家族 —— 由每日 16:40「ADX 对数结果更新」自动写入，只读展示
 window.DASH_NOAPI = {
-  cutoff: "2026-11-25",
+  cutoff: "2026-11-26",
   families: [
-    {name:"mobupps",    lastPartner:"11-17", lastOurs:"11-25", blank:8, firstDate:"11-18", first:1431,    last:495,     pct:-65.41,  note:"11/18 起大幅下探，11/21–11/24 稳定在 515–581"},
-    {name:"geniee",     lastPartner:"11-18", lastOurs:"11-25", blank:7, firstDate:"11-19", first:180.46,  last:127.88,  pct:-29.14,  note:"降到 109 后小幅回升至 125–128"},
-    {name:"speeddata",  lastPartner:"列全空", lastOurs:"11-25", blank:7, firstDate:"11-19", first:1.16,   last:13.39,   pct:1054.31, note:"涨幅几乎全来自 11/25 单日，区间合计仅 30.76 美元"},
-    {name:"apkpure",    lastPartner:"11-22", lastOurs:"11-25", blank:3, firstDate:"11-23", first:244.01,  last:187.15,  pct:-23.30,  note:""},
-    {name:"mobikok",    lastPartner:"11-22", lastOurs:"11-25", blank:3, firstDate:"11-23", first:330.07,  last:160.79,  pct:-51.29,  note:"11/22 还有 853，之后连降三天"},
-    {name:"display_adx",lastPartner:"11-22", lastOurs:"11-25", blank:3, firstDate:"11-23", first:703.28,  last:177.99,  pct:-74.69,  note:"降幅集中在 11/25：604.81 → 177.99"},
-    {name:"flatads",    lastPartner:"11-24", lastOurs:"11-25", blank:1, firstDate:"11-24", first:4721.17, last:4093.24, pct:-13.30,  note:"只差 1 天，未达 3 天；Impression 列长期空白"}
+    {name:"mobupps",    lastPartner:"11-17", lastOurs:"11-26", blank:9, firstDate:"11-18", first:1431,    last:456,     pct:-68.13,  note:"11/18 起大幅下探，11/22–11/26 由 515 一路降到 456"},
+    {name:"geniee",     lastPartner:"11-26", lastOurs:"11-26", blank:0, firstDate:"11-26", first:106.25,  last:106.25,  pct:0,       note:"对方数据已补到 11-26，空白 0 天"},
+    {name:"speeddata",  lastPartner:"列全空", lastOurs:"11-26", blank:8, firstDate:"11-19", first:1.16,   last:4.32,    pct:272.41,  note:"总量仅几十美元量级，波动随机"},
+    {name:"apkpure",    lastPartner:"11-22", lastOurs:"11-26", blank:4, firstDate:"11-23", first:244.01,  last:219.12,  pct:-10.20,  note:""},
+    {name:"mobikok",    lastPartner:"11-22", lastOurs:"11-26", blank:4, firstDate:"11-23", first:330.07,  last:117.86,  pct:-64.29,  note:"连续四天回落；停更前 cost gap 11-20 −6.10%、11-21 −28.72%、11-22 −44.15%"},
+    {name:"display_adx",lastPartner:"11-22", lastOurs:"11-26", blank:4, firstDate:"11-23", first:703.28,  last:238.26,  pct:-66.12,  note:"11/23–11/26 连降，11/25 探底 177.99 后回升到 238.26"},
+    {name:"flatads",    lastPartner:"11-24", lastOurs:"11-26", blank:2, firstDate:"11-25", first:4093.24, last:4212.28, pct:2.91,    note:"只差 2 天未达 3 天；Impression 列长期空白"}
   ],
   concl: [
-    {name:"mobupps", text:" 近 8 天未更新数据，消耗下降约 65.41%。"},
-    {name:"geniee", text:" 近 7 天未更新数据，消耗下降约 29.14%。"},
-    {name:"speeddata", text:" 近 7 天未更新数据，消耗上涨约 1054.31%；对方列全空，无法做 gap 对比，量级过小、参考意义有限。"},
-    {name:"apkpure", text:" 近 3 天未更新数据，消耗下降约 23.30%。"},
-    {name:"mobikok", text:" 近 3 天未更新数据，消耗下降约 51.29%；停更前 cost gap 连续走阔，11-20 我方比对方少 6.07%、11-21 少 28.72%、11-22 少 44.15%，已超过 3%。"},
-    {name:"display_adx", text:" 近 3 天未更新数据，消耗下降约 74.69%。"},
-    {kind:"note", text:"未达标 1 家"},
-    {name:"flatads", text:" 只差 1 天未达 3 天；Impression 列长期空白。"}
+    {name:"mobupps", text:" 近 9 天未更新数据，消耗下降约 68.13%。"},
+    {name:"speeddata", text:" 近 8 天未更新数据，消耗上涨约 272.41%；对方列全空，无法做 gap 对比，量级过小、参考意义有限。"},
+    {name:"apkpure", text:" 近 4 天未更新数据，消耗下降约 10.20%。"},
+    {name:"mobikok", text:" 近 4 天未更新数据，消耗下降约 64.29%；停更前 cost gap 连续走阔，11-20 我方比对方少 6.10%、11-21 少 28.72%、11-22 少 44.15%，已超过 3%。"},
+    {name:"display_adx", text:" 近 4 天未更新数据，消耗下降约 66.12%。"},
+    {kind:"note", text:"未达标 2 家"},
+    {name:"geniee", text:" 对方数据已补到 11-26，暂无停滞。"},
+    {name:"flatads", text:" 只差 2 天未达 3 天。"}
   ]
 };
 
